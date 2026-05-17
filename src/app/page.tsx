@@ -1,65 +1,123 @@
-import Image from "next/image";
+// ============================================
+// BLOC — Main Game Page (Mobile-First)
+// ============================================
+'use client';
 
-export default function Home() {
+import React, { useRef } from 'react';
+import { useGame } from '@/game/useGame';
+import Board from '@/components/Board';
+import MiniPreview from '@/components/MiniPreview';
+import TouchControls from '@/components/TouchControls';
+import StartScreen from '@/components/StartScreen';
+import GameOver from '@/components/GameOver';
+import PauseOverlay from '@/components/PauseOverlay';
+
+export default function BlocGame() {
+  const {
+    gameState,
+    isStarted,
+    scorePopups,
+    isMounted,
+    startGame,
+    restartGame,
+    handleMoveLeft,
+    handleMoveRight,
+    handleSoftDrop,
+    handleHardDrop,
+    handleRotate,
+    handleHold,
+    handlePause,
+  } = useGame();
+
+  const boardRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="bloc-main">
+      {/* Top Bar: Hold, Logo + Score, Next */}
+      <div className="top-bar">
+        <MiniPreview type={isMounted ? gameState.holdPiece : null} label="Hold" />
+
+        <div className="top-center">
+          <h1 className="logo-text" style={{ fontSize: '1.1rem' }}>BLOC</h1>
+          <div className="top-stats">
+            <div className="top-stat">
+              <span className="stat-label">Score</span>
+              <span className="stat-value" id="score-display" style={{ fontSize: '1rem' }}>
+                {gameState.score.toLocaleString()}
+              </span>
+            </div>
+            <div className="top-stat">
+              <span className="stat-label">Lines</span>
+              <span className="stat-value" style={{ fontSize: '0.85rem' }}>{gameState.lines}</span>
+            </div>
+            <div className="top-stat">
+              <span className="stat-label">Lvl</span>
+              <span className="level-badge" id="level-display">
+                <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
+                  <polygon points="5,0 10,10 0,10" fill="currentColor" />
+                </svg>
+                {gameState.level}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <MiniPreview type={isMounted ? (gameState.nextPieces[0] || null) : null} label="Next" />
+      </div>
+
+      {/* Board */}
+      <div ref={boardRef} className="board-wrapper">
+        <Board
+          board={gameState.board}
+          currentPiece={isMounted ? gameState.currentPiece : null}
+          clearingRows={gameState.clearingRows}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        {/* Score popups */}
+        {scorePopups.map(popup => (
+          <div
+            key={popup.id}
+            className="score-popup"
+            style={{
+              left: `${popup.x}%`,
+              top: `${popup.y}%`,
+              transform: 'translateX(-50%)',
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {popup.text}
+          </div>
+        ))}
+
+        {/* Next pieces queue (2nd and 3rd) */}
+        <div className="next-queue">
+          {(isMounted ? gameState.nextPieces.slice(1, 3) : [null, null]).map((type, i) => (
+            <MiniPreview key={i} type={type as any} label="" />
+          ))}
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Touch Controls */}
+      <TouchControls
+        onMoveLeft={handleMoveLeft}
+        onMoveRight={handleMoveRight}
+        onSoftDrop={handleSoftDrop}
+        onHardDrop={handleHardDrop}
+        onRotate={handleRotate}
+        onHold={handleHold}
+        onPause={handlePause}
+        isPaused={gameState.isPaused}
+      />
+
+      {/* Overlays */}
+      {!isStarted && <StartScreen onStart={startGame} />}
+      {isStarted && gameState.isPaused && <PauseOverlay onResume={handlePause} />}
+      {isStarted && gameState.isGameOver && (
+        <GameOver
+          score={gameState.score}
+          lines={gameState.lines}
+          level={gameState.level}
+          onRestart={restartGame}
+        />
+      )}
+    </main>
   );
 }
