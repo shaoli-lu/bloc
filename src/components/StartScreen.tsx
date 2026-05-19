@@ -3,13 +3,23 @@
 // ============================================
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface StartScreenProps {
   onStart: () => void;
 }
 
 export default function StartScreen({ onStart }: StartScreenProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
+      onStart();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onStart]);
+
   return (
     <div className="overlay animate-fade-in" id="start-screen">
       <div className="overlay-card glass" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px' }}>
@@ -48,17 +58,27 @@ export default function StartScreen({ onStart }: StartScreenProps) {
           ))}
         </div>
 
-        <button
-          className="btn-primary"
-          onClick={onStart}
-          id="btn-start"
-          style={{ width: '100%', maxWidth: '240px' }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="6,3 20,12 6,21" />
-          </svg>
-          Start Game
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', width: '100%' }}>
+          <button
+            className="btn-primary"
+            onClick={onStart}
+            id="btn-start"
+            style={{ width: '100%', maxWidth: '240px' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="6,3 20,12 6,21" />
+            </svg>
+            Start Game
+          </button>
+          <span className="animate-pulse" style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.85rem',
+            color: 'var(--text-muted)',
+            letterSpacing: '0.05em'
+          }}>
+            press any key to Start the game
+          </span>
+        </div>
 
         {/* Controls hint */}
         <div style={{
@@ -70,9 +90,9 @@ export default function StartScreen({ onStart }: StartScreenProps) {
           fontSize: '0.7rem',
           fontFamily: 'var(--font-mono)',
         }}>
-          <span>← → move · ↓ soft drop</span>
-          <span>↑ rotate · space hard drop</span>
-          <span>C hold · P pause</span>
+          <span>← → / A D move · ↓ / S soft drop</span>
+          <span>↑ / W / X / E right turn · Z / Q left turn</span>
+          <span>Space hard drop · C hold · P pause</span>
         </div>
       </div>
     </div>

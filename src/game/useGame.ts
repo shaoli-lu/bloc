@@ -100,25 +100,36 @@ export function useGame() {
       switch (e.key) {
         case 'ArrowLeft':
         case 'a':
+        case 'A':
           e.preventDefault();
           setGameState(prev => moveLeft(prev));
           break;
         case 'ArrowRight':
         case 'd':
+        case 'D':
           e.preventDefault();
           setGameState(prev => moveRight(prev));
           break;
         case 'ArrowDown':
         case 's':
+        case 'S':
           e.preventDefault();
           setGameState(prev => softDrop(prev).state);
           break;
         case 'ArrowUp':
         case 'w':
+        case 'W':
+        case 'x':
+        case 'X':
+        case 'e':
+        case 'E':
           e.preventDefault();
           setGameState(prev => rotate(prev, 1));
           break;
         case 'z':
+        case 'Z':
+        case 'q':
+        case 'Q':
           e.preventDefault();
           setGameState(prev => rotate(prev, -1));
           break;
@@ -127,11 +138,13 @@ export function useGame() {
           setGameState(prev => hardDrop(prev));
           break;
         case 'c':
+        case 'C':
         case 'Shift':
           e.preventDefault();
           setGameState(prev => holdPieceAction(prev));
           break;
         case 'p':
+        case 'P':
         case 'Escape':
           e.preventDefault();
           setGameState(prev => togglePause(prev));
