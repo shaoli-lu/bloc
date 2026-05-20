@@ -16,6 +16,7 @@ import {
   holdPiece as holdPieceAction,
   togglePause,
   getDropInterval,
+  finalizeClear,
 } from './engine';
 
 export interface ScorePopup {
@@ -45,6 +46,16 @@ export function useGame() {
   useEffect(() => {
     gameStateRef.current = gameState;
   }, [gameState]);
+
+  // Handle line clear animation
+  useEffect(() => {
+    if (gameState.clearingRows.length > 0) {
+      const timer = setTimeout(() => {
+        setGameState(prev => finalizeClear(prev));
+      }, 400); // Wait for CSS animation to finish
+      return () => clearTimeout(timer);
+    }
+  }, [gameState.clearingRows]);
 
   // Score popup
   useEffect(() => {

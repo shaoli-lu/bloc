@@ -375,31 +375,10 @@ function lockAndSpawnNext(state: GameState): GameState {
     const totalLines = state.lines + linesCleared;
     const newLevel = Math.floor(totalLines / 10) + 1;
 
-    const clearedBoard = clearRows(board, fullRows);
-    const { piece, nextPieces } = getNextPiece(state);
-
-    // Check game over
-    if (!isValidPosition(clearedBoard, piece)) {
-      return {
-        ...state,
-        board: clearedBoard,
-        currentPiece: null,
-        nextPieces,
-        isGameOver: true,
-        score: totalScore,
-        lines: totalLines,
-        level: newLevel,
-        clearingRows: fullRows,
-        combo: newCombo,
-        canHold: true,
-      };
-    }
-
     return {
       ...state,
-      board: clearedBoard,
-      currentPiece: piece,
-      nextPieces,
+      board,
+      currentPiece: null,
       score: totalScore,
       lines: totalLines,
       level: newLevel,
@@ -432,6 +411,32 @@ function lockAndSpawnNext(state: GameState): GameState {
     clearingRows: [],
     combo: -1,
     canHold: true,
+  };
+}
+
+export function finalizeClear(state: GameState): GameState {
+  if (state.clearingRows.length === 0) return state;
+
+  const clearedBoard = clearRows(state.board, state.clearingRows);
+  const { piece, nextPieces } = getNextPiece(state);
+
+  if (!isValidPosition(clearedBoard, piece)) {
+    return {
+      ...state,
+      board: clearedBoard,
+      currentPiece: null,
+      nextPieces,
+      isGameOver: true,
+      clearingRows: [],
+    };
+  }
+
+  return {
+    ...state,
+    board: clearedBoard,
+    currentPiece: piece,
+    nextPieces,
+    clearingRows: [],
   };
 }
 
