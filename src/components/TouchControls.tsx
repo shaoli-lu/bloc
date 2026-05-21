@@ -64,8 +64,7 @@ export default function TouchControls({
       >
         <button
           className="touch-btn"
-          onTouchStart={(e) => { e.preventDefault(); onHold(); }}
-          onClick={onHold}
+          onPointerDown={(e) => { e.preventDefault(); onHold(); }}
           id="btn-hold"
           aria-label="Hold piece"
           style={{ width: '48px', height: '48px', fontSize: '0.7rem', fontFamily: 'var(--font-display)', fontWeight: 600, letterSpacing: '0.05em' }}
@@ -74,8 +73,7 @@ export default function TouchControls({
         </button>
         <button
           className="touch-btn"
-          onTouchStart={(e) => { e.preventDefault(); onPause(); }}
-          onClick={onPause}
+          onPointerDown={(e) => { e.preventDefault(); onPause(); }}
           id="btn-pause"
           aria-label={isPaused ? 'Resume' : 'Pause'}
           style={{ width: '48px', height: '48px' }}
@@ -93,8 +91,7 @@ export default function TouchControls({
         </button>
         <button
           className="touch-btn"
-          onTouchStart={(e) => { e.preventDefault(); onRotate(-1); }}
-          onClick={() => onRotate(-1)}
+          onPointerDown={(e) => { e.preventDefault(); onRotate(-1); }}
           id="btn-rotate-ccw"
           aria-label="Rotate counter-clockwise"
           style={{ width: '48px', height: '48px' }}
@@ -117,10 +114,10 @@ export default function TouchControls({
       >
         <button
           className="touch-btn touch-btn-lg"
-          onTouchStart={(e) => { e.preventDefault(); startRepeat(onMoveLeft); }}
-          onTouchEnd={stopRepeat}
-          onTouchCancel={stopRepeat}
-          onClick={onMoveLeft}
+          onPointerDown={(e) => { e.preventDefault(); startRepeat(onMoveLeft); }}
+          onPointerUp={stopRepeat}
+          onPointerCancel={stopRepeat}
+          onPointerLeave={stopRepeat}
           id="btn-left"
           aria-label="Move left"
         >
@@ -131,10 +128,10 @@ export default function TouchControls({
 
         <button
           className="touch-btn touch-btn-lg"
-          onTouchStart={(e) => { e.preventDefault(); startRepeat(onSoftDrop); }}
-          onTouchEnd={stopRepeat}
-          onTouchCancel={stopRepeat}
-          onClick={onSoftDrop}
+          onPointerDown={(e) => { e.preventDefault(); startRepeat(onSoftDrop); }}
+          onPointerUp={stopRepeat}
+          onPointerCancel={stopRepeat}
+          onPointerLeave={stopRepeat}
           id="btn-down"
           aria-label="Soft drop"
         >
@@ -145,8 +142,7 @@ export default function TouchControls({
 
         <button
           className="touch-btn touch-btn-lg"
-          onTouchStart={(e) => { e.preventDefault(); onHardDrop(); }}
-          onClick={onHardDrop}
+          onPointerDown={(e) => { e.preventDefault(); onHardDrop(); }}
           id="btn-hard-drop"
           aria-label="Hard drop"
           style={{
@@ -162,10 +158,10 @@ export default function TouchControls({
 
         <button
           className="touch-btn touch-btn-lg"
-          onTouchStart={(e) => { e.preventDefault(); startRepeat(onMoveRight); }}
-          onTouchEnd={stopRepeat}
-          onTouchCancel={stopRepeat}
-          onClick={onMoveRight}
+          onPointerDown={(e) => { e.preventDefault(); startRepeat(onMoveRight); }}
+          onPointerUp={stopRepeat}
+          onPointerCancel={stopRepeat}
+          onPointerLeave={stopRepeat}
           id="btn-right"
           aria-label="Move right"
         >
@@ -176,8 +172,7 @@ export default function TouchControls({
 
         <button
           className="touch-btn touch-btn-lg"
-          onTouchStart={(e) => { e.preventDefault(); onRotate(1); }}
-          onClick={() => onRotate(1)}
+          onPointerDown={(e) => { e.preventDefault(); onRotate(1); }}
           id="btn-rotate-cw"
           aria-label="Rotate clockwise"
         >
