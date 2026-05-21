@@ -27,18 +27,29 @@ export default function TouchControls({
   isPaused,
 }: TouchControlsProps) {
   const repeatTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const startRepeat = useCallback((action: () => void) => {
-    action();
-    repeatTimerRef.current = setInterval(action, 100);
-  }, []);
+  const initialDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const stopRepeat = useCallback(() => {
+    if (initialDelayRef.current) {
+      clearTimeout(initialDelayRef.current);
+      initialDelayRef.current = null;
+    }
     if (repeatTimerRef.current) {
       clearInterval(repeatTimerRef.current);
       repeatTimerRef.current = null;
     }
   }, []);
+
+  const startRepeat = useCallback((action: () => void) => {
+    action(); // Fire immediately once
+    stopRepeat(); // Clear any existing timers just in case
+
+    // Wait before starting the repeat (DAS - Delayed Auto Shift)
+    initialDelayRef.current = setTimeout(() => {
+      // Repeat interval (ARR - Auto Repeat Rate)
+      repeatTimerRef.current = setInterval(action, 80);
+    }, 250);
+  }, [stopRepeat]);
 
   return (
     <div
