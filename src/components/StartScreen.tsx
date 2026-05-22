@@ -3,7 +3,7 @@
 // ============================================
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface StartScreenProps {
   onStart: () => void;
@@ -22,7 +22,7 @@ export default function StartScreen({ onStart }: StartScreenProps) {
 
   return (
     <div className="overlay animate-fade-in" id="start-screen">
-      <div className="overlay-card glass" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px' }}>
+      <div className="overlay-card glass" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '28px' }}>
         {/* Logo */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
           <h1
@@ -76,25 +76,85 @@ export default function StartScreen({ onStart }: StartScreenProps) {
             color: 'var(--text-muted)',
             letterSpacing: '0.05em'
           }}>
-            press any key to Start the game
+            press any key to start
           </span>
         </div>
 
-        {/* Controls hint */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '4px',
-          alignItems: 'center',
-          opacity: 0.4,
-          fontSize: '0.7rem',
-          fontFamily: 'var(--font-mono)',
-        }}>
-          <span>← → / A D move · ↓ / S soft drop</span>
-          <span>↑ / W / X / E right turn · Z / Q left turn</span>
-          <span>Space hard drop · C hold · P pause</span>
-        </div>
+        {/* Controls hint — touch vs keyboard */}
+        <ControlsHint />
       </div>
+    </div>
+  );
+}
+
+function ControlsHint() {
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia('(hover: none) and (pointer: coarse)').matches);
+  }, []);
+
+  const touchRows = [
+    { icon: '↔', label: 'Drag left / right — move' },
+    { icon: '👆', label: 'Tap board — rotate' },
+    { icon: '⚡', label: 'Flick down — hard drop' },
+    { icon: '↑', label: 'Swipe up — hold' },
+    { icon: '↺↻', label: 'Buttons — rotate  ·  ⏸ pause' },
+  ];
+
+  const keyRows = [
+    { icon: '← →', label: 'Move  ·  A / D' },
+    { icon: '↑', label: 'Rotate  ·  W / X / E' },
+    { icon: '↓', label: 'Soft drop  ·  S' },
+    { icon: '␣', label: 'Hard drop' },
+    { icon: 'C', label: 'Hold  ·  P / Esc pause' },
+  ];
+
+  const rows = isTouch ? touchRows : keyRows;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '100%' }}>
+      <p style={{
+        fontFamily: 'var(--font-mono)',
+        fontSize: '0.6rem',
+        color: 'var(--text-muted)',
+        textTransform: 'uppercase',
+        letterSpacing: '0.12em',
+        marginBottom: '2px',
+        textAlign: 'center',
+      }}>
+        {isTouch ? 'Touch Controls' : 'Keyboard Controls'}
+      </p>
+      {rows.map(({ icon, label }) => (
+        <div
+          key={label}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '5px 10px',
+            borderRadius: '8px',
+            background: 'rgba(255,255,255,0.03)',
+          }}
+        >
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.7rem',
+            color: 'var(--accent-cyan)',
+            minWidth: '30px',
+            textAlign: 'center',
+          }}>
+            {icon}
+          </span>
+          <span style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.72rem',
+            color: 'var(--text-secondary)',
+          }}>
+            {label}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
