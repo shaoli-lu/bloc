@@ -11,6 +11,7 @@ import TouchControls from '@/components/TouchControls';
 import StartScreen from '@/components/StartScreen';
 import GameOver from '@/components/GameOver';
 import PauseOverlay from '@/components/PauseOverlay';
+import { useDragControls } from '@/game/useDragControls';
 
 export default function BlocGame() {
   const {
@@ -30,6 +31,17 @@ export default function BlocGame() {
   } = useGame();
 
   const boardRef = useRef<HTMLDivElement>(null);
+
+  // Board drag controls — makes the board the primary touch surface
+  useDragControls(boardRef, {
+    onMoveLeft: handleMoveLeft,
+    onMoveRight: handleMoveRight,
+    onSoftDrop: handleSoftDrop,
+    onHardDrop: handleHardDrop,
+    onRotate: handleRotate,
+    onHold: handleHold,
+    enabled: isStarted && !gameState.isGameOver && !gameState.isPaused,
+  });
 
   return (
     <main className="bloc-main">
@@ -65,8 +77,12 @@ export default function BlocGame() {
         <MiniPreview type={isMounted ? (gameState.nextPieces[0] || null) : null} label="Next" />
       </div>
 
-      {/* Board */}
-      <div ref={boardRef} className="board-wrapper">
+      {/* Board — touch drag surface */}
+      <div
+        ref={boardRef}
+        className="board-wrapper"
+        style={{ touchAction: 'none', cursor: 'grab' }}
+      >
         <Board
           board={gameState.board}
           currentPiece={isMounted ? gameState.currentPiece : null}
@@ -86,6 +102,15 @@ export default function BlocGame() {
             {popup.text}
           </div>
         ))}
+
+        {/* Gesture hint — fades out after game starts */}
+        {isStarted && !gameState.isGameOver && !gameState.isPaused && (
+          <div className="gesture-hint" aria-hidden="true">
+            <span>← drag →</span>
+            <span>tap = rotate</span>
+            <span>↓ flick = drop</span>
+          </div>
+        )}
 
         {/* Next pieces queue (2nd and 3rd) */}
         <div className="next-queue">

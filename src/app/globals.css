@@ -201,6 +201,38 @@ body::before {
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.8) !important;
 }
 
+/* ---- Gesture Hint ---- */
+@keyframes gestureHintFade {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.gesture-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  background: rgba(10, 10, 26, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  padding: 5px 14px;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: gestureHintFade 4s ease-out forwards;
+  z-index: 10;
+}
+
+.gesture-hint span {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.04em;
+}
+
 /* ---- Preview / Hold Grid ---- */
 .mini-grid {
   display: grid;
